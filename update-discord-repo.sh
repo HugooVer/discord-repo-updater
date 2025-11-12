@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+umask 022
 exec 200>"/repo/.update.lock"
 flock -n 200 || { echo "[=] Already runing"; exit 0; }
 
@@ -32,11 +33,12 @@ echo "Version distante: $REMOTE_VER"
 
 if [ "$REMOTE_VER" != "$LOCAL_VER" ] || [ ! -f Packages.gz ]; then
   echo "[+] New version or missing index -> updating local repo..."
-  mv "$TMP_DEB" "$DEB_NAME"
+  install -m 0644 "$TMP_DEB" "$DEB_NAME"
 
   echo "[*] Generating APT index (Packages.gz)..."
   dpkg-scanpackages . /dev/null | gzip -9cn > Packages.gz.tmp
   mv -f Packages.gz.tmp Packages.gz
+  chmod 0644 Packages.gz
 else
   echo "[=] Up to date"
   rm -f "$TMP_DEB"
