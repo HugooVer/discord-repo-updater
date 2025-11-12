@@ -13,7 +13,7 @@ cd "$REPO_DIR"
 
 TMP_DEB="$(mktemp --suffix=__Dis)"
 
-echo "[*] Donwload Discord.deb..."
+echo "[*] Donwloading Discord.deb..."
 curl -Ls "$URL" -o "$TMP_DEB"
 
 REMOTE_VER=$(dpkg-deb -f "$TMP_DEB" Version || echo "0")
@@ -27,15 +27,16 @@ fi
 echo "Version locale  : $LOCAL_VER"
 echo "Version distante: $REMOTE_VER"
 
-if [ "$REMOTE_VER" != "$LOCAL_VER" ]; then
-  echo "[+] New version Up, Updationg local repo..."
+if [ "$REMOTE_VER" != "$LOCAL_VER" ] || [ ! -f Packages.gz ]; then
+  echo "[+] New version or missing index -> updating local repo..."
   mv "$TMP_DEB" "$DEB_NAME"
+
+  echo "[*] Generating APT index (Packages.gz)..."
+  dpkg-scanpackages . /dev/null | gzip -9cn > Packages.gz.tmp
+  mv -f Packages.gz.tmp Packages.gz
 else
   echo "[=] Up to date"
-  rm "$TMP_DEB"
+  rm -f "$TMP_DEB"
 fi
-
-echo "[*] Index APT generation (Packages.gz)..."
-dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz
 
 echo "[OK] Local APT up to date."
