@@ -11,7 +11,7 @@ URL="https://discord.com/api/download?platform=linux&format=deb" # discord.deb u
 mkdir -p "$REPO_DIR"
 cd "$REPO_DIR"
 
-TMP_DEB="$(mktemp --sufix=__Dis)"
+TMP_DEB="$(mktemp --suffix=__Dis)"
 
 echo "[*] Donwload Discord.deb..."
 curl -Ls "$URL" -o "$TMP_DEB"
