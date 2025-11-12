@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+exec 200>"/repo/.update.lock"
+flock -n 200 || { echo "[=] Already runing"; exit 0; }
+
 set -euo pipefail # error prevention
 
 REPO_DIR="/repo"
