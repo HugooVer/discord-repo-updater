@@ -34,6 +34,7 @@ echo "Version distante: $REMOTE_VER"
 if [ "$REMOTE_VER" != "$LOCAL_VER" ] || [ ! -f Packages.gz ]; then
   echo "[+] New version or missing index -> updating local repo..."
   install -m 0644 "$TMP_DEB" "$DEB_NAME"
+  rm -f "$TMP_DEB"
 
   echo "[*] Generating APT index (Packages.gz)..."
   dpkg-scanpackages . /dev/null | gzip -9cn > Packages.gz.tmp
